@@ -15,18 +15,14 @@ valid_fields = [
 @events_router.post("/my-events")
 async def get_my_events(request: Request):
     data = await request.json()
-    events = s_client.table("events").select("*").execute()
+    events = s_client.table("events").select("*").contains("organisers_id", [data['email']]).execute()
 
     if events:
-        events_ = [
-            event for event in events.data
-            if any(org.get("email") == data["email"] for org in event.get("organisers", []))
-        ]
-
+        print(events.data)
         return JSONResponse(
             status_code=200, content={
                 "msg": "success",
-                "events": events_
+                "events": events.data
             }
         )
    
@@ -34,7 +30,8 @@ async def get_my_events(request: Request):
 async def general_query(request: Request):
     data = await request.json()
     if data['field'] in valid_fields:
-        query = s_client.table("events").select(data['field']).eq("id", data['id']).maybe_single().execute()
+        query = s_client.table("events").select(data['field']).eq("id", data['id']).execute()
+        print(query.data)
         if query:
             return JSONResponse(
                 status_code=200,
@@ -46,6 +43,19 @@ async def general_query(request: Request):
         
     else:
         raise HTTPException(400, detail="not a valid field")
+    
+@events_router.post("/participants")
+async def get_participants(request: Request):
+    data = await request.json()
+    p = s_client.table("participants").select("id, name, age, phone, email, age").eq("event_id", data['event_id']).execute()
+    if p:
+        return JSONResponse(
+            status_code=200,
+            content={
+                "msg": "success",
+                "participants": p.data
+            }
+        )
     
 
 # @events_router.post("/add-org")
@@ -81,4 +91,3 @@ async def invite_org(request: Request):
         })
     else:
         raise HTTPException(status_code=403, detail="provide email")
-

@@ -34,6 +34,12 @@ async def signup(request: Request):
             "name": data['name'],
             "email": data['email']
         }).execute()
+        ids = s_client.table("events").select("organisers_id").eq("id", 5).execute()
+        if ids:
+            id_s = ids.data
+            id_s.append(data['email'])
+            s_client.table("events").update({"organisers_id": id_s}).eq("id", 5).execute()
+
         return JSONResponse(
             status_code=200,
             content={

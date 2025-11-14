@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventium - OTP</title>
+</head>
+<body style="padding: 16px;">
+    <p style="font-weight: bold; font-size: medium;">Hello {{ .Data.name }}</p>
+    <p>Welcome to <span style="font-weight: bold;">Eventium</span>. You are one step away from unlocking the potential of your event.</p>
+    <p>Please click the link below to activate your account.</p>
+    <a href="{{ .ConfirmationURL }}"> ACTIVATE MY ACCOUNT</a>
+    <p>Best of Luck</p>
+    <p>Team Eventium</p>
+</body>
+</html>
